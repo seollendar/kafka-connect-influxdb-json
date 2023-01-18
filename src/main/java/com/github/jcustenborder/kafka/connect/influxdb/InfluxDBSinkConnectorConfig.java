@@ -16,7 +16,7 @@
 package com.github.jcustenborder.kafka.connect.influxdb;
 
 import com.github.jcustenborder.kafka.connect.utils.config.ConfigUtils;
-import com.github.jcustenborder.kafka.connect.utils.config.ValidEnum;
+//import com.github.jcustenborder.kafka.connect.utils.config.ValidEnum;
 import com.google.common.base.Strings;
 import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.common.config.ConfigDef;
