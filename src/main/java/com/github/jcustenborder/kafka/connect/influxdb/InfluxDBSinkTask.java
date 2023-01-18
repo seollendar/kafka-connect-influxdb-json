@@ -79,8 +79,8 @@ public class InfluxDBSinkTask extends SinkTask {
       System.out.println("THIS IS VALUE OF RECORDS : " + jsonMap);
 
 
-      //String measurement = this.config.measurement;
-      String measurement = "test";
+      String measurement = this.config.measurement;
+      //String measurement = "test";
       final Map<String, String> tags = new HashMap<String, String>();
       //tags.put("ApplicationEntity", uriArr[1]);
       //tags.put("Container", uriArr[2]);

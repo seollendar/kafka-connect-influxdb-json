@@ -44,7 +44,10 @@ class InfluxDBSinkConnectorConfig extends AbstractConfig {
 
   public static final String PASSWORD_CONF = "influxdb.password";
   static final String PASSWORD_DOC = "The password to connect to InfluxDB with.";
-
+  
+  public static final String MEASUREMENT_CONF = "influxdb.measurement";
+  static final String MEASUREMENT_DOC = "The MEASUREMENT to connect to InfluxDB with.";
+  
   public static final String GZIP_ENABLE_CONF = "influxdb.gzip.enable";
   static final String GZIP_ENABLE_DOC = "Flag to determine if gzip should be enabled.";
 
@@ -55,6 +58,8 @@ class InfluxDBSinkConnectorConfig extends AbstractConfig {
   public final String url;
   public final String username;
   public final String password;
+  public final String measurement;
+
   public final boolean authentication;
   public final boolean gzipEnable;
 
@@ -70,6 +75,7 @@ class InfluxDBSinkConnectorConfig extends AbstractConfig {
     this.username = getString(USERNAME_CONF);
     this.authentication = !Strings.isNullOrEmpty(this.username);
     this.password = getPassword(PASSWORD_CONF).value();
+    this.measurement = getString(MEASUREMENT_CONF);
     this.gzipEnable = getBoolean(GZIP_ENABLE_CONF);
   }
 
@@ -80,6 +86,7 @@ class InfluxDBSinkConnectorConfig extends AbstractConfig {
         .define(DATABASE_CONF, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, DATABASE_DOC)
         .define(USERNAME_CONF, ConfigDef.Type.STRING, "", ConfigDef.Importance.HIGH, USERNAME_DOC)
         .define(PASSWORD_CONF, ConfigDef.Type.PASSWORD, "", ConfigDef.Importance.HIGH, PASSWORD_DOC)
+        .define(MEASUREMENT_CONF, ConfigDef.Type.STRING, "", ConfigDef.Importance.HIGH, MEASUREMENT_DOC)
         .define(CONSISTENCY_LEVEL_CONF, ConfigDef.Type.STRING, InfluxDB.ConsistencyLevel.ONE.toString(), ValidEnum.of(InfluxDB.ConsistencyLevel.class), ConfigDef.Importance.MEDIUM, CONSISTENCY_LEVEL_DOC)
         .define(TIMEUNIT_CONF, ConfigDef.Type.STRING, TimeUnit.MILLISECONDS.toString(), ValidEnum.of(TimeUnit.class), ConfigDef.Importance.MEDIUM, TIMEUNIT_DOC)
         .define(LOG_LEVEL_CONF, ConfigDef.Type.STRING, InfluxDB.LogLevel.NONE.toString(), ValidEnum.of(InfluxDB.LogLevel.class), ConfigDef.Importance.LOW, LOG_LEVEL_DOC)
