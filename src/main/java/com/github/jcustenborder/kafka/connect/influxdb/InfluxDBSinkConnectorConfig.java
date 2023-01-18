@@ -29,8 +29,8 @@ class InfluxDBSinkConnectorConfig extends AbstractConfig {
 
   public static final String DATABASE_CONF = "influxdb.database";
   static final String DATABASE_DOC = "The influxdb database to write to.";
-  public static final String CONSISTENCY_LEVEL_CONF = "influxdb.consistency.level";
-  static final String CONSISTENCY_LEVEL_DOC = "The default consistency level for writing data to InfluxDB.";
+  //public static final String CONSISTENCY_LEVEL_CONF = "influxdb.consistency.level";
+  //static final String CONSISTENCY_LEVEL_DOC = "The default consistency level for writing data to InfluxDB.";
   public static final String TIMEUNIT_CONF = "influxdb.timeunit";
   static final String TIMEUNIT_DOC = "The default timeunit for writing data to InfluxDB.";
   public static final String LOG_LEVEL_CONF = "influxdb.log.level";
@@ -52,7 +52,7 @@ class InfluxDBSinkConnectorConfig extends AbstractConfig {
   static final String GZIP_ENABLE_DOC = "Flag to determine if gzip should be enabled.";
 
   public final String database;
-  public final InfluxDB.ConsistencyLevel consistencyLevel;
+  //public final InfluxDB.ConsistencyLevel consistencyLevel;
   public final TimeUnit precision;
   public final InfluxDB.LogLevel logLevel;
   public final String url;
@@ -67,7 +67,7 @@ class InfluxDBSinkConnectorConfig extends AbstractConfig {
     super(config(), settings);
 
     this.database = getString(DATABASE_CONF);
-    this.consistencyLevel = ConfigUtils.getEnum(InfluxDB.ConsistencyLevel.class, this, CONSISTENCY_LEVEL_CONF);
+    //this.consistencyLevel = ConfigUtils.getEnum(InfluxDB.ConsistencyLevel.class, this, CONSISTENCY_LEVEL_CONF);
     this.precision = ConfigUtils.getEnum(TimeUnit.class, this, TIMEUNIT_CONF);
     this.logLevel = ConfigUtils.getEnum(InfluxDB.LogLevel.class, this, LOG_LEVEL_CONF);
 
