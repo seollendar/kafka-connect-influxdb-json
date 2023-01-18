@@ -72,32 +72,7 @@ public class InfluxDBSinkTask extends SinkTask {
   static final Schema TAG_OPTIONAL_SCHEMA = SchemaBuilder.map(Schema.STRING_SCHEMA, Schema.STRING_SCHEMA).optional().build();
   @Override
   public void put(Collection<SinkRecord> records) {
-    /**
-     * Mobius CIN Return Data
-     *
-     * {
-     *     "m2m:rce": {
-     *         "uri": "Mobius/kafka_ae/t_cnt2/4-202204050238413792316",
-     *         "m2m:cin": {
-     *             "rn": "4-202204050238413792316",
-     *             "ty": 4,
-     *             "pi": "3-20220404020617497645",
-     *             "ri": "4-20220405023841380700",
-     *             "ct": "20220405T023841",
-     *             "lt": "20220405T023841",
-     *             "st": 192,
-     *             "et": "20240405T023841",
-     *             "cs": 62,
-     *             "con": {
-     *                 "Latitude": 15.45243,
-     *                 "Longitude": 102.48484,
-     *                 "Altitude": 15.4545
-     *             },
-     *             "cr": "S20170717074825768bp2l"
-     *         }
-     *     }
-     * }
-     */
+
     if (null == records || records.isEmpty()) {
       return;
     }
@@ -109,37 +84,27 @@ public class InfluxDBSinkTask extends SinkTask {
       System.out.println("**************** \n \n \n \n \n \n****************** \n \n \n \n HERE \n **************** \n");
       System.out.println("THIS IS VALUE OF RECORDS : " + jsonMap);
 
-      Map<String, Object> rceData = (Map<String, Object>) jsonMap.get("m2m:rce");
-      String cinURI = (String) rceData.get("uri");
-      String[] uriArr = cinURI.split("/");
-      String measurement = "timeseries";
+
+      String measurement = config.measurement;
       final Map<String, String> tags = new HashMap<String, String>();
-      tags.put("ApplicationEntity", uriArr[1]);
-      tags.put("Container", uriArr[2]);
-      System.out.println("THIS IS VALUE OF CONTAINER : " + tags.toString());
+      //tags.put("ApplicationEntity", uriArr[1]);
+      //tags.put("Container", uriArr[2]);
+      //System.out.println("THIS IS VALUE OF CONTAINER : " + tags.toString());
 
       final long time = record.timestamp();
       PointKey key = PointKey.of(measurement, time, tags);
       Map<String, Object> fields = builders.computeIfAbsent(key, pointKey -> new HashMap<>(100));
 
-      Map<String, Object> dataField = (Map<String, Object>) rceData.get("m2m:cin");
-      System.out.println("THIS IS VALUE OF Data Fields : " + dataField);
+ 
       try {
         /**
          * flatten nested data field & Get Parsed Creation Time
          */
 
-        String creationTime = (String) dataField.get("ct");
-        SimpleDateFormat  dateParser  = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-        SimpleDateFormat  dateFormatter   = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date parsedTime = dateParser.parse(creationTime);
-        creationTime = dateFormatter.format(parsedTime);
 
-        System.out.println("THIS IS CON STRING VALUE *** : " + dataField.get("con").toString());
-        String respData = objectMapper.writeValueAsString(dataField.get("con"));
+        String respData = objectMapper.writeValueAsString(jsonMap);
 
         JSONObject flattenedDataField = (JSONObject) jParser.parse(JsonFlattener.flatten(respData));
-        flattenedDataField.put("creation_time", creationTime);
         System.out.println("THIS IS VALUE OF FLATTENED JSON : " + flattenedDataField);
 
         ArrayList<String> fieldKeys = new ArrayList<String>(flattenedDataField.keySet());
@@ -160,8 +125,6 @@ public class InfluxDBSinkTask extends SinkTask {
         }
       } catch (ParseException e) {
         e.printStackTrace();
-      } catch (java.text.ParseException e) {
-        e.printStackTrace();
       } catch (JsonMappingException e) {
         e.printStackTrace();
       } catch (JsonParseException e) {
@@ -172,19 +135,7 @@ public class InfluxDBSinkTask extends SinkTask {
         e.printStackTrace();
       }
     }
-    /*
-     * For Kafka Produce (Flatten Data)
-     */
-    Properties props = new Properties();
-    props.put("bootstrap.servers", "localhost:9092");
-    props.put("acks", "all");
-    props.put("retries", 0);
-    props.put("batch.size", 16384);
-    props.put("linger.ms", 1);
-    props.put("buffer.memory", 33554432);
-    props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-    props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-    Producer<String, String> producer = new KafkaProducer<String, String>(props);
+
     Map<String, Object> flattenData = null;
 
     BatchPoints.Builder batchBuilder = BatchPoints.database(this.config.database).consistency(this.config.consistencyLevel);
@@ -202,18 +153,7 @@ public class InfluxDBSinkTask extends SinkTask {
         log.trace("put() - Adding point {}", point.toString());
       }
       batchBuilder.point(point);
-      Map<String, String> tmpTags = values.getKey().tags;
-      String kafkaTopic = "refine." + tmpTags.get("ApplicationEntity") + "." + tmpTags.get("Container");
-      Map<String, Object> kafkaData = flattenData;
-      kafkaData.put("ApplicationEntity", values.getKey().tags.get("ApplicationEntity"));
-      kafkaData.put("container", values.getKey().tags.get("Container"));
-      try {
-        producer.send(new ProducerRecord<String, String>(kafkaTopic, objectMapper.writeValueAsString(kafkaData))); //topic, data
-        System.out.println("Message sent successfully" + flattenData);
-        producer.close();
-      } catch (Exception e) {
-        System.out.println("Kafka Produce Exception : " + e);
-      }
+
 
     }
     BatchPoints batch = batchBuilder.build();
