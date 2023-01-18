@@ -133,7 +133,9 @@ public class InfluxDBSinkTask extends SinkTask {
 
     Map<String, Object> flattenData = null;
 
-    BatchPoints.Builder batchBuilder = BatchPoints.database(this.config.database).consistency(this.config.consistencyLevel);
+    //BatchPoints.Builder batchBuilder = BatchPoints.database(this.config.database).consistency(this.config.consistencyLevel);
+    BatchPoints batchBuilder = BatchPoints.database(this.config.database).retentionPolicy("autogen").build();
+    
 
     for (Map.Entry<PointKey, Map<String, Object>> values : builders.entrySet()) {
       final Point.Builder builder = Point.measurement(values.getKey().measurement);
@@ -151,8 +153,8 @@ public class InfluxDBSinkTask extends SinkTask {
 
 
     }
-    BatchPoints batch = batchBuilder.build();
-    this.influxDB.write(batch);
+    //BatchPoints batch = batchBuilder.build();
+    this.influxDB.write(batchBuilder);
   }
 
   @Override
