@@ -86,10 +86,10 @@ class InfluxDBSinkConnectorConfig extends AbstractConfig {
         .define(DATABASE_CONF, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, DATABASE_DOC)
         .define(USERNAME_CONF, ConfigDef.Type.STRING, "", ConfigDef.Importance.HIGH, USERNAME_DOC)
         .define(PASSWORD_CONF, ConfigDef.Type.PASSWORD, "", ConfigDef.Importance.HIGH, PASSWORD_DOC)
-        .define(MEASUREMENT_CONF, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, MEASUREMENT_DOC)
         .define(CONSISTENCY_LEVEL_CONF, ConfigDef.Type.STRING, InfluxDB.ConsistencyLevel.ONE.toString(), ValidEnum.of(InfluxDB.ConsistencyLevel.class), ConfigDef.Importance.MEDIUM, CONSISTENCY_LEVEL_DOC)
         .define(TIMEUNIT_CONF, ConfigDef.Type.STRING, TimeUnit.MILLISECONDS.toString(), ValidEnum.of(TimeUnit.class), ConfigDef.Importance.MEDIUM, TIMEUNIT_DOC)
         .define(LOG_LEVEL_CONF, ConfigDef.Type.STRING, InfluxDB.LogLevel.NONE.toString(), ValidEnum.of(InfluxDB.LogLevel.class), ConfigDef.Importance.LOW, LOG_LEVEL_DOC)
-        .define(GZIP_ENABLE_CONF, ConfigDef.Type.BOOLEAN, true, ConfigDef.Importance.LOW, GZIP_ENABLE_DOC);
+        .define(GZIP_ENABLE_CONF, ConfigDef.Type.BOOLEAN, true, ConfigDef.Importance.LOW, GZIP_ENABLE_DOC)
+    	.define(MEASUREMENT_CONF, ConfigDef.Type.STRING, ConfigDef.Importance.HIGH, MEASUREMENT_DOC);
   }
 }
